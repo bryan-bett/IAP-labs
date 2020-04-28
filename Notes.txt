@@ -1,0 +1,15 @@
+Class lab exercises
+
+CREATE TABLE user(
+* "user" is a reserved word
+
+The define() function defines a constant.
+Constants are much like variables, except for the following differences:
+• A constant's value cannot be changed after it is set
+• Constant names do not need a leading dollar sign ($)
+• Constants can be accessed regardless of scope
+• Constant values can only be strings and numbers
+
+ line 18 - 21 
+$res stores bool value true or false from a query to the db
+the displays a message according to this result  
