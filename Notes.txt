@@ -13,3 +13,16 @@ Constants are much like variables, except for the following differences:
  line 18 - 21 
 $res stores bool value true or false from a query to the db
 the displays a message according to this result  
+
+// lab 2
+client side validation using js or html 5(using require, restricting type and length etc)
+-> not all users use html 5 and some user disable js
+
+server side validation resolves these two problems
+
+// i think
+('I will understand what i mean when i read these, guests should assume them')
+// getters and setters can be used instead of constructors when assigning values 
+// use static methods is like faking a _constructor
+// in the work, when login out you need to call ...
+

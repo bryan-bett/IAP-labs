@@ -1,13 +1,16 @@
 <?php
     include "Crud.php";
-    include_once 'DBConnector.php';
-    class User implements Crud{
+    include "authenticator.php";
+
+    class User implements Crud,Authenticator{
         private $user_id;
         private $first_name;
         private $last_name;
         private $city_name;
         private $con;
 
+        private $username;
+        private $password;
         function __construct($first_name, $last_name,$city_name){
             $this->first_name = $first_name;
             $this->last_name = $last_name;
@@ -50,6 +53,24 @@
         }
         public function removeAll(){
             return null;
+        }
+
+        // lab 2 
+        // server side validation
+        public function validateForm(){
+            //return false if values are empty
+            $fn = $this->first_name;
+            $ln = $this->last_name;
+            $city = $this->city_name;
+            if($fn == "" || $ln == "" || $city == ""){
+                return false;
+            }
+            return true;
+        }
+        public function createFormErrorSessions(){
+            session_start();
+            $_SESSION['form_error']= "All fields are required";
+            //echo $_SESSION['form_error'];
         }
 
     }
