@@ -3,12 +3,15 @@
     include_once 'user.php';
     $con = new DBConnection();/*Database connection is  made*/ 
     //data insertion code starts here
+    
     if (isset($_POST['btn-save'])){
         $first_name = $_POST['first_name'];
         $last_name = $_POST['last_name'];
         $city = $_POST['city_name'];
+        $username = $_POST['username'];
+        $password = $_POST['password'];
         //creating a user object
-        $user = new User ($first_name,$last_name,$city);
+        $user = new User ($first_name,$last_name,$city,$username,$password);
         if (!$user->validateForm()){
             $user->createFormErrorSessions();
             header("Refresh:2");
@@ -62,9 +65,23 @@
             </tr>
             <tr>
                 <td>
+                <input type="text" name="username" placeholder="Username">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                <input type="password" name="password" placeholder="Password">
+                </td>
+            </tr>
+            <tr>
+                <td>
                 <button type="submit" name="btn-save"><strong>SAVE</strong></button>
                 </td>
             </tr>
+            <tr>
+                <td>
+                        <a href="login.php">Login</a>
+                </td>
         </table>
     </form>
 </body>

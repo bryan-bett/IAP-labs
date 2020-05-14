@@ -26,3 +26,4 @@ server side validation resolves these two problems
 // use static methods is like faking a _constructor
 // in the work, when login out you need to call ...
 
+https://www.kerstner.at/2015/03/overloading-constructors-and-functions-in-php/

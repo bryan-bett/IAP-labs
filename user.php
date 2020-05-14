@@ -11,12 +11,43 @@
 
         private $username;
         private $password;
-        function __construct($first_name, $last_name,$city_name){
+        function __construct(){
+            $this->first_name = $first_name;
+            $this->last_name = $last_name;
+            $this->city_name = $city_name;
+            $this->username = $username;
+            $this->password = $password;
+            $this->con = new DBConnection;
+        }
+        /*public function setUser($first_name, $last_name,$city_name){
             $this->first_name = $first_name;
             $this->last_name = $last_name;
             $this->city_name = $city_name;
             $this->con = new DBConnection;
         }
+        public function setLoginCred(){
+            $this->username = $username;
+            $this->password = $password;
+        }*/
+
+        public static function create (){
+            $instance = new self();
+            return $instance;
+        }
+        public function setUsername($username){
+            return $this->Username = $username;
+        }
+        public function getUsername(){
+            return $this->username;
+        }
+        public function setPassword($password){
+            return $this->password = $password;
+        }
+        public function getPassword(){
+            return $this->password;
+        }
+
+
         public function setUserId(){
             $this->user_id = $user_id;
         }
@@ -29,7 +60,10 @@
             $fn = $this->first_name;
             $ln = $this->last_name;
             $city = $this ->city_name;
-            $stm = "INSERT INTO users(first_name,last_name,user_city)VALUE ('$fn','$ln','$city')";
+            $this ->hashPAssword();
+            $pass = $this->password;
+            $uname = $this->username;
+            $stm = "INSERT INTO users(first_name,last_name,user_city,username,password)VALUE ('$fn','$ln','$city','$uname','$pass')";
             $res = mysqli_query($this->con->conn,$stm) or die("Error: ".mysqli_error($this->con->conn));
             // stores bool value true or false from a query to the db
             $this->con->closeDatabase();
@@ -72,7 +106,41 @@
             $_SESSION['form_error']= "All fields are required";
             //echo $_SESSION['form_error'];
         }
+        public function hashPassword(){
+            // inbuilt function password_hashes our password
+            $this ->password = password_hash($this->password,PASSWORD_DEFAULT);
+        }
+        public function isPasswordCorrect(){
+            $con = new DBConnector;
+            $found = false;
+            $res = mysqli_query("SELECT * FROM user") or die ("Error: ".mysqli_error());
+            while ($row=mysql_fetch_array($res)){
+                if(password_verify($this->getPassword(),$row['password']) && $this->getUsername()==$row['username']){
+                    $found = true;
+                }
+            }
+            //close the db connection
+            $con->closeDatabase();
+            return $found;
+            //return true;
+        }
+        public function login(){
+            if($this->isPasswordCorrect()){
+                //password is correct. so we load the protected page
+                header("Location: private_page.php");
+            }
+        }
+        public function createUserSession(){
+            session_start();
+            $_SESSION['username'] = $this->getUsername();
+        }
+        public function logout(){
+            session_start();
+            unset($_SESSION['username']);
+            session_destroy();
+            header("Location:lab1.php");
 
+        }
     }
 
 ?>
