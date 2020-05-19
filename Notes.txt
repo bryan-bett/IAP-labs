@@ -27,3 +27,7 @@ server side validation resolves these two problems
 // in the work, when login out you need to call ...
 
 https://www.kerstner.at/2015/03/overloading-constructors-and-functions-in-php/
+
+// current*
+user creation lab1 and user
+concerning $con assume that the conector.php is just a class above the user class in the same folder
