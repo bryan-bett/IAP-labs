@@ -129,14 +129,11 @@
 
 
         public function isPasswordCorrect(){
-            $db = new DBConnection();// call to DBConnection class
-            $con =$db->getmyDB();           
-            
             $found = false;
-            $stmt = $con->prepare("SELECT * FROM users");
+            $stmt = $this->con->prepare("SELECT * FROM users");
             $stmt->execute();
             if ($stmt === FALSE){
-                die("Error: " .$con->errorInfo());
+                die("Error: " .$this->con->errorInfo());
             }
             else{
                 while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
@@ -147,7 +144,7 @@
                 }
             }
             //close the database connection 
-            $db->closeDatabase();
+            $this->db->closeDatabase();
             return $found;
             //return true;
         }
