@@ -1,8 +1,8 @@
 <?php
     include_once 'DBConnector.php';
     include_once 'user.php';
-    //$con = new DBConnection();/*Database connection is  made*/ 
-    //why tho
+    include_once 'fileUploader.php';
+    $con = new DBConnection();
 
     //data insertion code starts here
     
@@ -12,25 +12,36 @@
         $city = $_POST['city_name'];
         $username = $_POST['username'];
         $password = $_POST['password'];
+        $file = $_FILES["fileToUpload"]; 
+
+
         //creating a user object
         $user = new User ($first_name,$last_name,$city,$username,$password);
+        //creating a FileUploader object
+        $uploader = new FileUploader();
         if (!$user->validateForm()){
             $user->createFormErrorSessions();
-            echo "Something happened";
-            header("Refresh:2");
+            echo "All fields are required";
+            header("Refresh:1");
+            die();
+        }else if ($user->isUserExist()){
+            $user->createFormErrorSessions();
+            $_SESSION['form_errors'] = "This username is already taken";
+            header("Refresh:1");
             die();
         }
+        //save details and upload file
         $res = $user->save();
-        if($res){
+        $file_upload_response = $uploader->uploadFile($file);
+
+        if($res && $file_upload_response){
             echo "Done";
             ?>
-            <script>alert("User created successfully")</script>
+            <script>alert("Save operation successful")</script>
             <?php
-        }else{
-            ?>
-            <script>alert("Error")</script>
-            <?php
-        }
+        }else if(!$file_upload_response && empty($_SESSION['form_errors'])){
+        $_SESSION['form_errors'] = "File upload was unsuccessful";
+    }
     }
 ?>
 <html>
@@ -40,9 +51,22 @@
     <link rel="stylesheet" type="text/css" href="validate.css">
 </head>
 <body>
-    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post" 
+    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post" enctype="multipart/form-data"
                     name="user_details" id="user_details" onsubmit="return validateForm()">
         <table align="center">
+            <tr>
+                <div id="form_error">
+                    <?php
+                        if (session_status() == PHP_SESSION_NONE) {
+                            session_start();
+                        }
+                        if (!empty($_SESSION['form_errors'])) {
+                            echo " " . $_SESSION['form_errors'];
+                            unset($_SESSION['form_errors']);
+                        }
+                    ?>
+                </div>
+            </tr>
             <tr>
                 <td>
                 <input type="text" name="first_name" placeholder="First Name">
@@ -66,6 +90,12 @@
             <tr>
                 <td>
                 <input type="password" name="password" placeholder="Password">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                Profile image:
+                <input type="file" name="fileToUpload" id="fileToUpload">
                 </td>
             </tr>
             <tr>

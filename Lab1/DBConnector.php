@@ -28,7 +28,7 @@
             catch (Exception $e) {
                 error_log($e->getMessage());
                 //echo $e->getMessage();
-                exit('Something weird happened'); //something a user can understand
+                exit('Something weird happened. A connection was not established'); //something a user can understand
               }
         }
         public function getmyDB(){
@@ -43,6 +43,6 @@
         }
     }
     //implement query, bind, execute and resultset
-    //reference
+    //helpful reference
     //https://stackoverflow.com/questions/42863856/call-to-a-member-function-on-null/42864293
 ?>

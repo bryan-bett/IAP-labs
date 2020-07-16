@@ -28,7 +28,7 @@
             $this->user_id = $user_id;
         }
         public function getUserId(){
-            return $this->$user_id;
+            return $this->user_id;
         }
         public function save(){
             $fn = $this->first_name;
@@ -37,18 +37,16 @@
             $uname = $this->username;
             $this->hashPassword();
             $pass=$this->password;
-
             $stmt = $this->con->prepare("INSERT INTO users(first_name,last_name,user_city,username,password)VALUE (?,?,?,?,?)");
             $data= array($fn,$ln,$city,$uname,$pass);
             $stmt->execute($data);
-            $res = $stmt;
+            $res=$stmt;
             $stmt = null;
             $this->db->closeDatabase();
             // stores bool value true or false from a query to the db
             return $res;
         }
         public function readAll(){
-            //$con = new DBConnection();
             $stmt = $this->con->prepare("SELECT * FROM users");
             $stmt->execute();
             $this->db->closeDatabase();
@@ -64,19 +62,24 @@
             return $result;
             //return array
         }
+        public function isUserExist(){
+            $stmt = $this->con->prepare("SELECT * FROM users WHERE username = '$this->username' LIMIT 1");
+            $stmt->execute();
+            return $stmt->rowCount() > 0;          
+        }
         public static function create(){
-            $instance = new self();
+            $instance = new self("","","","","");
             return $instance;
         }
 
         public function setUsername($username){
-            return $this->Username = $username;
+             $this->Username = $username;
         }
         public function getUsername(){
             return $this->username;
         }
         public function setPassword($password){
-            return $this->password = $password;
+             $this->password = $password;
         }
         public function getPassword(){
             return $this->password;
@@ -106,7 +109,10 @@
             $fn = $this->first_name;
             $ln = $this->last_name;
             $city = $this->city_name;
-            if($fn==""||$ln==""||$city==""){
+            $pass = $this->password;
+            $uname = $this->username;
+
+            if($fn==""||$ln==""||$city==""||$pass==""||$uname==""){
                 return false;
             }
             return true;
@@ -122,17 +128,23 @@
         }
 
 
-        public function isPasswordCorrect($username,$password){
+        public function isPasswordCorrect(){
             $db = new DBConnection();// call to DBConnection class
             $con =$db->getmyDB();           
             
             $found = false;
             $stmt = $con->prepare("SELECT * FROM users");
             $stmt->execute();
-            while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-                if(password_verify($password,$row['password']) && $username == $row['username']){
-                    $found=true;
-                }            
+            if ($stmt === FALSE){
+                die("Error: " .$con->errorInfo());
+            }
+            else{
+                while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                    if (password_verify($this->getPassword(),$row['password']) && "test9" == $row['username']) {
+                        $this->setUserId($row['id']);
+                        $found = true;
+                    }
+                }
             }
             //close the database connection 
             $db->closeDatabase();
@@ -146,14 +158,16 @@
             }
         }
 
-        public  function createUserSession($username){
+        public  function createUserSession(){
             session_start();
-            $_SESSION['username'] = $username;
+            $_SESSION['username'] = $this->getUserId();
+            $_SESSION['user_id'] = $this->user_id;
 
         }
         public function logout(){
             session_start();
             unset($_SESSION['username']);
+            unset($_SESSION['user_id']);
             session_destroy();
             header("Location:lab1.php");
         }    
