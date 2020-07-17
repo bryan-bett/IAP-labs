@@ -12,7 +12,10 @@
         private $db;
         private $con;
 
-        function __construct($first_name, $last_name, $city_name, $username, $password){
+        private $created_at;
+        private $utc_offset;
+
+        function __construct($first_name, $last_name, $city_name, $username, $password,$created_at,$utc_offset){
             $this->first_name = $first_name;
             $this->last_name = $last_name;
             $this->city_name = $city_name;
@@ -20,8 +23,9 @@
             $this->password = $password;
             $this->db = new DBConnection();// call to DBCOnnection class
             $this->con = $this->db->getmyDB();
-            //$this->con =$this->con->__construct();//call to __construct function
-            // Subtitution to this was extending DBConnector.php to use the return value of the constructor
+
+            $this->created_at = date("Y-m-d H:i:s", intdiv(intval($created_at) , 1000));
+            $this->utc_offset = intval($utc_offset);
         }
 
         public function setUserId($user_id){
@@ -37,8 +41,11 @@
             $uname = $this->username;
             $this->hashPassword();
             $pass=$this->password;
-            $stmt = $this->con->prepare("INSERT INTO users(first_name,last_name,user_city,username,password)VALUE (?,?,?,?,?)");
-            $data= array($fn,$ln,$city,$uname,$pass);
+            $created_at = $this->created_at;
+            $offset = $this->utc_offset;
+
+            $stmt = $this->con->prepare("INSERT INTO users(first_name,last_name,user_city,username,password,created_at,offset)VALUE (?,?,?,?,?,?,?)");
+            $data= array($fn,$ln,$city,$uname,$pass,$created_at,$offset);
             $stmt->execute($data);
             $res=$stmt;
             $stmt = null;
@@ -83,6 +90,26 @@
         }
         public function getPassword(){
             return $this->password;
+        }
+
+        public function getCreatedAt()
+        {
+            return $this->created_at;
+        }
+
+        public function setCreatedAt($created_at)
+        {
+            $this->created_at = $created_at;
+        }
+
+        public function getUTCOffset()
+        {
+            return $this->utc_offset;
+        }
+
+        public function setUTCOffset($offset)
+        {
+            $this->utc_offset = $offset;
         }
 
         
