@@ -75,12 +75,12 @@
             return $stmt->rowCount() > 0;          
         }
         public static function create(){
-            $instance = new self("","","","","");
+            $instance = new self("","","","","","","");
             return $instance;
         }
 
         public function setUsername($username){
-             $this->Username = $username;
+             $this->username = $username;
         }
         public function getUsername(){
             return $this->username;
@@ -164,7 +164,7 @@
             }
             else{
                 while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-                    if (password_verify($this->getPassword(),$row['password']) && "test9" == $row['username']) {
+                    if (password_verify($this->getPassword(),$row['password']) && $this->getUsername() == $row['username']) {
                         $this->setUserId($row['id']);
                         $found = true;
                     }

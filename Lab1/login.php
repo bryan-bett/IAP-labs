@@ -17,7 +17,6 @@
                 ?>
                 <script>alert("Wrong password")</script>
                 <?php
-                header("Location:login.php");
           }
     }
 
